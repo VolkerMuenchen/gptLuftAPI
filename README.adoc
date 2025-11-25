@@ -1,0 +1,29 @@
+= gptLuftAPI
+
+Ein JavaFX- und Leaflet-basiertes Tool zur Anzeige und Analyse von Feinstaubdaten (PM2.5) von sensor.community.
+
+== Funktionen
+
+- Abruf von PM2.5-Daten via REST-API
+- Anzeige auf einer interaktiven Karte
+- Export nach SVG und PNG
+- Logging in CSV-Dateien
+- Unterstützt mehrere Sensoren
+- Vollständig in Java mit Gradle (Kotlin DSL)
+
+== Nutzung
+
+```
+./gradlew run
+```
+
+== Build
+
+```
+./gradlew clean build
+```
+
+== Export
+
+Die generierte HTML-Karte liegt in `build/map/karte.html`  
+Exportierte PNG/SVG liegen in `build/export/`
