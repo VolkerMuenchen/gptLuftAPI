@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang='de'>
+<head>
+  <meta charset='utf-8'/>
+  <meta name='viewport' content='width=device-width, initial-scale=1'/>
+  <title>PM2.5 Karte</title>
+  <link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>
+  <script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;padding:0}
+    h2{margin:12px 16px}
+    #map{height:72vh;margin:0 16px;border-radius:8px}
+    .legend{position:absolute;bottom:16px;left:26px;background:#fff;padding:8px 10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.15);line-height:1.4}
+    .legend .dot{font-size:18px;vertical-align:middle;margin-right:6px}
+  </style>
+</head>
+<body>
+  <h2>PM2.5 Sensorwerte mit Mini-Charts (Klick auf Marker)</h2>
+  <div id='map'></div>
+
+  <div class='legend'><b>Legende</b><br>
+    <span class='dot' style='color:green'>●</span> ≤ 10&nbsp;&nbsp;
+    <span class='dot' style='color:orange'>●</span> 11–20&nbsp;&nbsp;
+    <span class='dot' style='color:red'>●</span> > 20
+  </div>
+
+  <script>
+    var map = L.map('map').setView([48.5216, 9.0576], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+
+    var sensors = {};
+sensors['81607'] = {lat:48.521600, lon:9.057600, color:'green', labels:['22:45','22:50','22:55','22:58','23:10','23:12','23:14','23:17','23:22','23:24','23:27','23:29','23:34','23:37','23:40','00:07','00:10','00:32','00:35','01:02','01:05','01:32','01:34','02:02','02:05','02:32','02:35','07:20','07:22','07:49','07:52','08:10','08:12','08:15','08:25','08:27','08:30','08:57','08:59','09:27','09:29','09:57','10:00','10:28','10:30'], values:[3.85,3.47,3.85,3.47,3.85,3.47,2.97,2.83,3.15,3.38,3.30,2.80,3.03,2.83,2.92,3.10,3.17,2.60,3.00,2.97,3.25,3.75,3.78,2.97,2.97,1.67,1.85,2.38,2.17,2.35,2.72,2.63,2.40,2.80,2.47,2.17,2.53,2.78,2.58,2.72,2.83,2.03,2.13,2.13,1.95]};
+sensors['91091'] = {lat:48.529600, lon:9.123000, color:'green', labels:['08:27','08:30','08:57','08:59','09:27','09:29','09:57','09:59','10:27','10:30'], values:[5.05,5.05,6.43,7.95,5.43,5.78,4.60,4.97,4.90,4.95]};
+(function(){
+    var d = sensors['81607'];
+    var m = L.circleMarker([d.lat, d.lon], {radius: 10, color: d.color}).addTo(map);
+
+    m.on('click', function(){
+        if (d.values.length >= 3) {
+            var cid = 'chart_81607';
+            var content =
+              "<b>Sensor 81607</b><br>Messpunkte: " + d.values.length +
+              "<div style='width:320px;margin-top:6px'>" +
+              "<canvas id='" + cid + "' width='320' height='160'></canvas>" +
+              "</div>";
+            this.bindPopup(content).openPopup();
+
+            setTimeout(function(){
+                var canvas = document.getElementById(cid);
+                if (!canvas) return;
+                var ctx = canvas.getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: d.labels,
+                        datasets: [{
+                            label: 'PM2.5',
+                            data: d.values,
+                            borderColor: 'blue',
+                            tension: 0.2
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }, 80);
+
+        } else {
+            this.bindPopup("<b>Sensor 81607</b><br>Nicht genug Daten (mind. 3 Punkte).").openPopup();
+        }
+    });
+
+})();
+(function(){
+    var d = sensors['91091'];
+    var m = L.circleMarker([d.lat, d.lon], {radius: 10, color: d.color}).addTo(map);
+
+    m.on('click', function(){
+        if (d.values.length >= 3) {
+            var cid = 'chart_91091';
+            var content =
+              "<b>Sensor 91091</b><br>Messpunkte: " + d.values.length +
+              "<div style='width:320px;margin-top:6px'>" +
+              "<canvas id='" + cid + "' width='320' height='160'></canvas>" +
+              "</div>";
+            this.bindPopup(content).openPopup();
+
+            setTimeout(function(){
+                var canvas = document.getElementById(cid);
+                if (!canvas) return;
+                var ctx = canvas.getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: d.labels,
+                        datasets: [{
+                            label: 'PM2.5',
+                            data: d.values,
+                            borderColor: 'blue',
+                            tension: 0.2
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }, 80);
+
+        } else {
+            this.bindPopup("<b>Sensor 91091</b><br>Nicht genug Daten (mind. 3 Punkte).").openPopup();
+        }
+    });
+
+})();
+  </script>
+</body>
+</html>

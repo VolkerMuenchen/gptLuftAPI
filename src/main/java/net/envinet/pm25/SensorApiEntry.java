@@ -1,0 +1,1 @@
+package net.envinet.pm25; import com.fasterxml.jackson.annotation.JsonIgnoreProperties; import java.util.*; @JsonIgnoreProperties(ignoreUnknown=true) public class SensorApiEntry { public String timestamp; public List<SensorApiValue> sensordatavalues; }

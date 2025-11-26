@@ -1,0 +1,1 @@
+package net.envinet.pm25; import com.fasterxml.jackson.annotation.JsonIgnoreProperties; @JsonIgnoreProperties(ignoreUnknown=true) public class SensorApiValue { public String value_type; public String value; }
