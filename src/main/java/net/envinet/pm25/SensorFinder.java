@@ -51,7 +51,7 @@ public class SensorFinder {
 
         List<SensorEntry> nearest =
                 all.stream()
-                        .sorted(Comparator.comparingDouble(s -> distance(baseLat, baseLon, s.lat, s.lon)))
+                        .sorted(Comparator.comparingDouble(s -> haversineKm(baseLat, baseLon, s.lat, s.lon)))
                         .limit(5)
                         .collect(Collectors.toList());
 
@@ -142,7 +142,7 @@ System.out.println("]");
             if (lat == 0 || lon == 0) continue;
 
             // grober Umkreisfilter (~25 km)
-            if (distance(lat0, lon0, lat, lon) < 25.0) {
+            if (haversineKm(lat0, lon0, lat, lon) < 25.0) {
                 SensorEntry s = new SensorEntry();
                 s.id = id;
                 s.lat = lat;
@@ -157,8 +157,7 @@ System.out.println("]");
     // --------------------------------------------------------------------
     // Haversine-Distanz (km)
     // --------------------------------------------------------------------
-
-    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+    public static double haversineKm(double lat1, double lon1, double lat2, double lon2) {
         double R = 6371.0;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -167,4 +166,15 @@ System.out.println("]");
                 * Math.sin(dLon/2)*Math.sin(dLon/2);
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
+
+    public static String formatSensorJsonLine(String id, double lat, double lon, boolean trailingComma) {
+        // Locale.US erzwingt Dezimalpunkt
+        return String.format(
+                java.util.Locale.US,
+                "  { \"id\": \"%s\", \"lat\": %.6f, \"lon\": %.6f }%s",
+                id, lat, lon, trailingComma ? "," : ""
+        );
+    }
+
 }
+
